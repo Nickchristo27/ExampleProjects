@@ -1,4 +1,4 @@
-//Nicholas Christophides 113319835
+//Nicholas Christophides
 
 @SuppressWarnings("rawtypes")
 public class Song implements Comparable{
