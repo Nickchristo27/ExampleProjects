@@ -1,4 +1,4 @@
-# Nicholas Christophides    113319835
+# Nicholas Christophides
 
 import scipy.stats as stats
 import numpy as np
