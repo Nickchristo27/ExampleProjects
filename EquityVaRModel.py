@@ -1,4 +1,4 @@
-# Nicholas Christophides     SBU ID: 113319835
+# Nicholas Christophides
 
 import pandas as pd
 import numpy as np
