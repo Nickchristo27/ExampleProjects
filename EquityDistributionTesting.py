@@ -1,4 +1,4 @@
-# Nicholas Christophides
+# Nicholas Christophides    113319835
 
 import scipy.stats as stats
 import numpy as np
@@ -43,7 +43,6 @@ skewed_t_params = np.zeros((7, 4))
 for i in range(skewed_t_params.shape[0]):
     skewed_t_params[i, 0], skewed_t_params[i, 1], skewed_t_params[i, 2], skewed_t_params[i, 3] = \
         stats.jf_skew_t.fit(log_returns[:, i])
-
 
 # ********** Kolmogorov-Smirnov Tests **********
 
@@ -92,19 +91,59 @@ print(pd.DataFrame(np.array([names, ks_results_skew_t])))
 
 # ********** Anderson-Darling Tests **********
 
+
 # Anderson-Darling Test: Normal Distribution
-ad_results_norm = np.zeros(7)  # Establish array for storing results
+print("Anderson-Darling Test for Normality:\n")
 
 for i in range(7):
+    print(f"{names[i]}")
     ad_result = stats.anderson(log_returns[:, i], "norm")  # Find test statistic
-    print(f'\n{ad_result.statistic}')
+    print(f'Test Statistic: {ad_result.statistic}')
 
     # Find critical values at each level of significance
     for j in range(len(ad_result.critical_values)):
         sig = ad_result.significance_level[j]
         crit = ad_result.critical_values[j]
-        print(f"Significance Level: {sig:.1f}%, Critical Value: {crit:.3f}")
+        print(f"Normal Distribution:\nSignificance Level: {sig:.1f}%, Critical Value: {crit:.3f}")
     print("\n")
+
+# Anderson-Darling Test: T Distribution
+print("Anderson-Darling Test against T-distribution:\n")
+
+for i in range(7):
+    t_sample = stats.t.rvs(t_params[i, 0], loc=t_params[i, 1], scale=t_params[i, 2], size=10000)
+
+    print(f"{names[i]}")
+    # Find test statistic
+    ad_result = stats.anderson_ksamp([log_returns[:, i], t_sample], method=stats.PermutationMethod())
+    print(f'Test Statistic: \n{ad_result.statistic}')
+    print(f'P-value: {ad_result.pvalue}\n')
+
+# Anderson-Darling Test: NIG Distribution
+print("Anderson-Darling Test against NIG distribution:\n")
+
+for i in range(7):
+    NIG_sample = stats.norminvgauss.rvs(NIG_params[i, 0], NIG_params[i, 1],
+                                        loc=NIG_params[i, 2], scale=NIG_params[i, 3], size=10000)
+
+    print(f"{names[i]}")
+    # Find test statistic
+    ad_result = stats.anderson_ksamp([log_returns[:, i], NIG_sample], method=stats.PermutationMethod())
+    print(f'Test Statistic: \n{ad_result.statistic}')
+    print(f'P-value: {ad_result.pvalue}\n')
+
+# Anderson-Darling Test: Skewed T-Distribution
+print("Anderson-Darling Test against Skewed T-distribution:\n")
+
+for i in range(7):
+    skewed_t_sample = stats.jf_skew_t.rvs(skewed_t_params[i, 0], skewed_t_params[i, 1], loc=skewed_t_params[i, 2],
+                                          scale=skewed_t_params[i, 3], size=10000)
+
+    print(f"{names[i]}")
+    # Find test statistic
+    ad_result = stats.anderson_ksamp([log_returns[:, i], skewed_t_sample], method=stats.PermutationMethod())
+    print(f'Test Statistic: \n{ad_result.statistic}')
+    print(f'P-value: {ad_result.pvalue}\n')
 
 # ********** Q-Q Plots **********
 
